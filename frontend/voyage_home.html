@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Voyage AI - Trip Planner</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#171b27",
+                        "tertiary": "#7cd0ff",
+                        "surface-container-highest": "#313441",
+                        "on-surface-variant": "#dec0b9",
+                        "tertiary-fixed-dim": "#7cd0ff",
+                        "inverse-on-surface": "#2c303c",
+                        "surface-container-lowest": "#0a0e19",
+                        "surface-container-high": "#262a36",
+                        "secondary": "#ffb780",
+                        "primary-fixed-dim": "#ffb4a3",
+                        "surface-container": "#1b1f2b",
+                        "tertiary-container": "#1dafe9",
+                        "secondary-fixed": "#ffdcc4",
+                        "surface": "#0f131e",
+                        "on-primary-fixed": "#3d0700",
+                        "inverse-surface": "#dfe2f2",
+                        "on-secondary-fixed-variant": "#6c3a0a",
+                        "on-tertiary": "#00354a",
+                        "on-primary": "#621000",
+                        "on-secondary-container": "#f1a971",
+                        "secondary-container": "#6f3c0d",
+                        "surface-variant": "#313441",
+                        "on-error": "#690005",
+                        "inverse-primary": "#a53b22",
+                        "on-primary-container": "#721702",
+                        "surface-tint": "#ffb4a3",
+                        "primary-container": "#ff7e5f",
+                        "primary-fixed": "#ffdad2",
+                        "error-container": "#93000a",
+                        "on-tertiary-container": "#003e57",
+                        "surface-bright": "#353945",
+                        "tertiary-fixed": "#c4e7ff",
+                        "on-secondary-fixed": "#2f1400",
+                        "on-error-container": "#ffdad6",
+                        "background": "#0f131e",
+                        "on-surface": "#dfe2f2",
+                        "primary": "#ffb4a3",
+                        "outline-variant": "#57423d",
+                        "surface-dim": "#0f131e",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#004c69",
+                        "on-background": "#dfe2f2",
+                        "outline": "#a68b84",
+                        "on-tertiary-fixed": "#001e2c",
+                        "secondary-fixed-dim": "#ffb780",
+                        "on-secondary": "#4e2600",
+                        "on-primary-fixed-variant": "#84240d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "lg": "40px",
+                        "container-max": "1440px",
+                        "xl": "64px",
+                        "sm": "12px"
+                    },
+                    "fontFamily": {
+                        "display-xl": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "code-sm": ["JetBrains Mono"],
+                        "label-md": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Geist"],
+                        "headline-lg-mobile": ["Geist"]
+                    },
+                    "fontSize": {
+                        "display-xl": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "code-sm": ["13px", {"lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "headline-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .ai-active-border {
+            border-top: 2px solid theme('colors.primary');
+        }
+        .pulse-shadow {
+            box-shadow: 0 0 0 0 rgba(255, 126, 95, 0.4);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 126, 95, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 126, 95, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 126, 95, 0); }
+        }
+        .chip {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .chip:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .chip.selected {
+            background: linear-gradient(to right, theme('colors.primary-container'), theme('colors.secondary'));
+            color: theme('colors.surface-container-lowest');
+            border-color: transparent;
+        }
+        .input-glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .input-glass:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 10px rgba(255, 126, 95, 0.2);
+            outline: none;
+        }
+        
+        /* Hide scrollbar for horizontal lists */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex selection:bg-primary-container selection:text-on-primary-container font-body-md overflow-x-hidden">
+<!-- Hero Shader Background -->
+<div class="fixed inset-0 z-[-1] overflow-hidden">
+<!-- STITCH_SHADER_START:ANIMATION_2 class="absolute inset-0 w-full h-full opacity-60" -->
+<div class="absolute inset-0 w-full h-full opacity-60" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_2" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_2');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+varying vec2 v_texCoord;
+uniform float u_time;
+uniform vec2 u_resolution;
+
+vec3 sunset_coral = vec3(1.0, 0.49, 0.37);
+vec3 sunset_amber = vec3(1.0, 0.75, 0.0);
+vec3 deep_navy = vec3(0.04, 0.06, 0.10);
+
+float noise(vec2 p) {
+    return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+void main() {
+    vec2 uv = v_texCoord;
+    
+    // Aurora waves
+    float wave1 = sin(uv.x * 3.0 + u_time * 0.5) * 0.5 + 0.5;
+    float wave2 = sin(uv.y * 2.0 - u_time * 0.3 + wave1) * 0.5 + 0.5;
+    
+    float mix_val = smoothstep(0.3, 0.7, (uv.y + wave1 * 0.2 + wave2 * 0.1));
+    
+    vec3 color = mix(deep_navy, mix(sunset_coral, sunset_amber, uv.x), mix_val * 0.3);
+    
+    // Ambient grain
+    float grain = (noise(uv + u_time * 0.01) - 0.5) * 0.05;
+    color += grain;
+    
+    gl_FragColor = vec4(color, 1.0);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_2 -->
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-background"></div>
+</div>
+<!-- Side Navigation Shell (Web/Desktop) -->
+<nav aria-label="Sidebar" class="hidden md:flex flex-col items-center py-base fixed left-0 top-0 h-full w-[72px] hover:w-64 transition-all duration-300 z-50 bg-surface/10 backdrop-blur-md border-r border-white/10 shadow-2xl group">
+<!-- Logo/Avatar Area -->
+<div class="mb-xl flex items-center justify-center w-full px-base overflow-hidden">
+<div class="w-12 h-12 rounded-full bg-gradient-to-tr from-primary to-secondary flex-shrink-0 flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-surface-container-lowest font-bold text-headline-md" style="font-variation-settings: 'FILL' 1;">sailing</span>
+</div>
+<div class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap overflow-hidden">
+<h1 class="font-headline-md text-headline-md font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Voyage AI</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Intelligent Serenity</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<ul class="flex flex-col gap-sm w-full px-base flex-grow">
+<!-- Active Tab: New Trip -->
+<li class="w-full">
+<a aria-current="page" class="flex items-center w-full p-2 rounded-lg text-white border-l-4 border-primary bg-white/5 transition-transform scale-95 active:scale-90" href="#" title="New Trip">
+<div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+</div>
+<span class="ml-4 font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">New Trip</span>
+</a>
+</li>
+<!-- Inactive Tabs -->
+<li class="w-full">
+<a class="flex items-center w-full p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/5 transition-transform scale-95 active:scale-90 border-l-4 border-transparent" href="#" title="History">
+<div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</div>
+<span class="ml-4 font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">History</span>
+</a>
+</li>
+<li class="w-full">
+<a class="flex items-center w-full p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/5 transition-transform scale-95 active:scale-90 border-l-4 border-transparent" href="#" title="Saved">
+<div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+</div>
+<span class="ml-4 font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Saved</span>
+</a>
+</li>
+<li class="w-full mt-auto">
+<a class="flex items-center w-full p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/5 transition-transform scale-95 active:scale-90 border-l-4 border-transparent" href="#" title="Settings">
+<div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</div>
+<span class="ml-4 font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Settings</span>
+</a>
+</li>
+<li class="w-full">
+<a class="flex items-center w-full p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/5 transition-transform scale-95 active:scale-90 border-l-4 border-transparent" href="#" title="Theme">
+<div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="palette">palette</span>
+</div>
+<span class="ml-4 font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Theme</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Bottom Navigation Shell (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-t border-white/10 flex justify-around items-center h-16 pb-safe">
+<a aria-current="page" class="flex flex-col items-center justify-center w-full h-full text-primary" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span class="text-[10px] font-medium leading-none">New Trip</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">history</span>
+<span class="text-[10px] font-medium leading-none">History</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">bookmark</span>
+<span class="text-[10px] font-medium leading-none">Saved</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span class="text-[10px] font-medium leading-none">Settings</span>
+</a>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-[72px] min-h-screen relative flex flex-col pt-xl md:pt-24 pb-24 px-margin-mobile md:px-margin-desktop items-center justify-start overflow-y-auto">
+<!-- Header Section -->
+<header class="w-full max-w-4xl text-center mb-lg flex flex-col items-center z-10">
+<div class="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-6">
+<span class="material-symbols-outlined text-primary text-[16px] mr-2" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-md text-label-md text-on-surface">AI Agent Workspace Active</span>
+</div>
+<h2 class="font-display-xl text-display-xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-on-surface-variant leading-tight mb-4 tracking-tight drop-shadow-lg max-w-3xl">
+                Plan your perfect trip with AI agents
+            </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl text-center">
+                Define your parameters. Our specialized agents will negotiate flights, curate itineraries, and manage your budget in real-time.
+            </p>
+</header>
+<!-- Command Card (The Planner) -->
+<section class="w-full max-w-3xl glass-card ai-active-border rounded-xl p-md md:p-lg z-10 shadow-[0_20px_40px_rgba(0,0,0,0.4)] flex flex-col gap-6 relative overflow-hidden">
+<!-- Subtle gradient glow behind the card content -->
+<div class="absolute -top-32 -right-32 w-64 h-64 bg-primary/10 rounded-full blur-[80px] pointer-events-none"></div>
+<!-- Row 1: Origin & Destination -->
+<div class="flex flex-col sm:flex-row gap-4 items-center relative z-10">
+<div class="w-full flex-1 relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">flight_takeoff</span>
+<input class="w-full input-glass rounded-lg py-3 pl-10 pr-4 text-on-surface placeholder:text-on-surface-variant/50 font-body-md" placeholder="Where from?" type="text" value="New York (JFK)"/>
+</div>
+<button aria-label="Swap locations" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center border border-white/10 hover:bg-white/10 transition-colors flex-shrink-0 z-20 group">
+<span class="material-symbols-outlined text-on-surface group-hover:rotate-180 transition-transform duration-300">swap_horiz</span>
+</button>
+<div class="w-full flex-1 relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors">flight_land</span>
+<input class="w-full input-glass rounded-lg py-3 pl-10 pr-4 text-on-surface placeholder:text-on-surface-variant/50 font-body-md" placeholder="Where to?" type="text"/>
+</div>
+</div>
+<!-- Row 2: Date Range -->
+<div class="w-full relative group z-10">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-tertiary transition-colors">calendar_month</span>
+<div class="flex items-center w-full input-glass rounded-lg overflow-hidden">
+<input class="flex-1 bg-transparent border-none py-3 pl-10 pr-4 text-on-surface placeholder:text-on-surface-variant/50 font-body-md focus:ring-0" placeholder="Add dates" type="text" value="Oct 12 - Oct 24"/>
+<div class="w-px h-6 bg-white/10"></div>
+<button class="px-4 py-3 text-on-surface-variant hover:text-on-surface text-sm font-medium transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">add</span> Flexible
+                    </button>
+</div>
+</div>
+<!-- Row 3: Travelers & Budget -->
+<div class="flex flex-col sm:flex-row gap-6 items-end z-10">
+<!-- Travelers -->
+<div class="flex-1 w-full flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface-variant">Travelers</label>
+<div class="flex items-center justify-between input-glass rounded-lg px-4 py-2 h-[50px]">
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined">person</span>
+<span class="font-body-md">Adults</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+<span class="font-body-md w-4 text-center">2</span>
+<button class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Budget -->
+<div class="flex-[1.5] w-full flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface-variant">Estimated Budget</label>
+<span class="font-label-md text-label-md text-primary">$4,500</span>
+</div>
+<div class="input-glass rounded-lg px-4 py-2 h-[50px] flex items-center gap-3">
+<span class="text-on-surface-variant font-medium">$</span>
+<input class="w-full accent-primary h-1 bg-white/10 rounded-full appearance-none outline-none" max="15000" min="500" type="range" value="4500"/>
+</div>
+</div>
+</div>
+<!-- Row 4: Interests / Vibes -->
+<div class="flex flex-col gap-3 z-10 mt-2">
+<label class="font-label-md text-label-md text-on-surface-variant">Trip Vibe &amp; Interests</label>
+<!-- Selected Chips -->
+<div class="flex flex-wrap gap-2 mb-1">
+<div class="chip selected rounded-full px-3 py-1.5 flex items-center gap-1 border border-white/10 cursor-pointer">
+<span class="material-symbols-outlined text-[16px]">restaurant</span>
+<span class="font-label-md text-label-md">Culinary</span>
+<span class="material-symbols-outlined text-[14px] ml-1 hover:text-white">close</span>
+</div>
+<div class="chip selected rounded-full px-3 py-1.5 flex items-center gap-1 border border-white/10 cursor-pointer">
+<span class="material-symbols-outlined text-[16px]">museum</span>
+<span class="font-label-md text-label-md">Museums</span>
+<span class="material-symbols-outlined text-[14px] ml-1 hover:text-white">close</span>
+</div>
+<div class="chip selected rounded-full px-3 py-1.5 flex items-center gap-1 border border-white/10 cursor-pointer">
+<span class="material-symbols-outlined text-[16px]">hotel_class</span>
+<span class="font-label-md text-label-md">Luxury</span>
+<span class="material-symbols-outlined text-[14px] ml-1 hover:text-white">close</span>
+</div>
+</div>
+<!-- Suggestions -->
+<div class="flex flex-wrap gap-2">
+<button class="chip rounded-full px-3 py-1.5 flex items-center gap-1 border border-white/20 text-on-surface-variant hover:text-on-surface bg-white/5">
+<span class="material-symbols-outlined text-[16px]">hiking</span>
+<span class="text-xs font-medium">Adventure</span>
+</button>
+<button class="chip rounded-full px-3 py-1.5 flex items-center gap-1 border border-white/20 text-on-surface-variant hover:text-on-surface bg-white/5">
+<span class="material-symbols-outlined text-[16px]">nightlife</span>
+<span class="text-xs font-medium">Nightlife</span>
+</button>
+<button class="chip rounded-full px-3 py-1.5 flex items-center gap-1 border border-white/20 text-on-surface-variant hover:text-on-surface bg-white/5">
+<span class="material-symbols-outlined text-[16px]">spa</span>
+<span class="text-xs font-medium">Wellness</span>
+</button>
+<button class="chip rounded-full px-3 py-1.5 flex items-center gap-1 border border-white/20 text-on-surface-variant hover:text-on-surface bg-white/5">
+<span class="material-symbols-outlined text-[16px]">shopping_bag</span>
+<span class="text-xs font-medium">Shopping</span>
+</button>
+</div>
+</div>
+<!-- Row 5: CTA -->
+<div class="mt-4 z-10">
+<button class="w-full py-4 rounded-lg bg-gradient-to-r from-primary-container to-secondary text-surface-container-lowest font-headline-md text-headline-md pulse-shadow transition-transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">flight</span>
+                    Initialize Agents &amp; Plan Trip
+                </button>
+</div>
+</section>
+<!-- Bottom Section: Features & Recent -->
+<div class="w-full max-w-5xl mt-xl flex flex-col gap-lg z-10">
+<!-- Feature Pills -->
+<div class="flex flex-wrap justify-center gap-4">
+<div class="flex items-center gap-2 px-4 py-2 rounded-full glass-card">
+<div class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_rgba(124,208,255,0.8)]"></div>
+<span class="font-label-md text-label-md text-on-surface-variant">5 Specialized AI Agents</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 rounded-full glass-card">
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(255,180,163,0.8)] animate-pulse"></div>
+<span class="font-label-md text-label-md text-on-surface-variant">Live Price Streaming</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 rounded-full glass-card">
+<span class="material-symbols-outlined text-[16px] text-secondary">account_balance_wallet</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Strict Budget Adherence</span>
+</div>
+</div>
+<!-- Recent Trips Row -->
+<div class="flex flex-col gap-4 w-full mt-6">
+<h3 class="font-headline-md text-headline-md text-on-surface px-2">Community Insights</h3>
+<div class="flex overflow-x-auto gap-4 pb-4 px-2 no-scrollbar snap-x">
+<!-- Card 1 -->
+<div class="snap-start min-w-[280px] max-w-[280px] glass-card rounded-xl p-4 flex flex-col gap-3 group cursor-pointer hover:bg-white/5 transition-colors">
+<div class="flex justify-between items-center mb-2">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">NYC</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_forward</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">CDG</span>
+</div>
+<span class="text-xs text-secondary bg-secondary/10 px-2 py-1 rounded-md font-medium">Paris</span>
+</div>
+<div class="h-24 w-full rounded-lg overflow-hidden relative">
+<img alt="Eiffel Tower" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A cinematic, high-contrast shot of the Eiffel Tower in Paris at dusk. The sky is a gradient of deep deep navy and warm sunset colors, aligning perfectly with the glassmorphic-industrial aesthetic. The lighting is moody and sophisticated, highlighting the structural geometry of the tower against the smooth, glowing sky." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCesZjCAQNUCGERuRnf7cuAd9pO3JC1KQA9kgkW9GqlHuY_VKFiuN_HNnCgNZhVy-Yqz4O0zTYBRDvGaPTzgB2hSeudC6949anlFCJMPPBc238tIQWI1wTNN_bKGrxieeC9xf8HjFg1UWmzSXpdcv_3r4cH-XzyAJOIkAQlcgs9BYym3gMs5Pu2IcIgzF7buPWS0ozWJRLjfuwPYiXUVMyToPcGJuap67eIKLzNRMD2CkHb1qX7DAqh4PduLmioDJEUcQqBp1DGPeKc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-2 left-2 flex gap-1">
+<span class="material-symbols-outlined text-[14px] text-white">restaurant</span>
+<span class="material-symbols-outlined text-[14px] text-white">museum</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-1">
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Est. Budget</span>
+<span class="font-label-md text-label-md text-on-surface">$3,200</span>
+</div>
+<span class="text-xs text-tertiary">7 days</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="snap-start min-w-[280px] max-w-[280px] glass-card rounded-xl p-4 flex flex-col gap-3 group cursor-pointer hover:bg-white/5 transition-colors">
+<div class="flex justify-between items-center mb-2">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">LHR</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_forward</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">HND</span>
+</div>
+<span class="text-xs text-primary bg-primary/10 px-2 py-1 rounded-md font-medium">Tokyo</span>
+</div>
+<div class="h-24 w-full rounded-lg overflow-hidden relative">
+<img alt="Tokyo Skyline" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A futuristic, cyberpunk-inspired view of the Tokyo skyline at night. Neon lights in sunset coral and cyan reflect off glass skyscrapers, creating a deep, technological atmosphere. The scene embodies the glassmorphic-industrial style, feeling like a high-tech command center view of a bustling metropolis." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjdE354VowgLgOghgzvmWXuSS0EjvJf1BqHXd2aSghu5vw--oXu65cDbJ8X7cxqg_qUM1MY7JhDZq5REf6LpHu5g0gXvOJrMT8sh_aXgD1jbxSTdxflasbEH-H56rOw_vYw54ifziQsxfIxdNVVv2H6yGnLd1wvSY_TpdhmdQNdnlzbe00BOxx4cioQDtVcOu0jOaSgdsl2nkAvxwVwAW1YEn6OnEjXcd_T2z5DUjz0RZaUfgH_HTcuzdhMvYMZLWoNqqlJ5XowIR0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-2 left-2 flex gap-1">
+<span class="material-symbols-outlined text-[14px] text-white">temple_buddhist</span>
+<span class="material-symbols-outlined text-[14px] text-white">train</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-1">
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Est. Budget</span>
+<span class="font-label-md text-label-md text-on-surface">$5,100</span>
+</div>
+<span class="text-xs text-tertiary">14 days</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="snap-start min-w-[280px] max-w-[280px] glass-card rounded-xl p-4 flex flex-col gap-3 group cursor-pointer hover:bg-white/5 transition-colors">
+<div class="flex justify-between items-center mb-2">
+<div class="flex items-center gap-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">SFO</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_forward</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">KEF</span>
+</div>
+<span class="text-xs text-tertiary bg-tertiary/10 px-2 py-1 rounded-md font-medium">Reykjavik</span>
+</div>
+<div class="h-24 w-full rounded-lg overflow-hidden relative">
+<img alt="Iceland Landscape" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A stark, majestic landscape of Iceland featuring dark volcanic rock and cold, glowing blue ice under a dusky sky. The scene is serene and slightly alien, fitting the 'intelligent serenity' theme. The lighting emphasizes the cold, structural nature of the environment, contrasting with subtle warm highlights in the clouds." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXN5IbxpCBuYuBO4TuZdEdOLA2GF9nYF2VHcLa5Y_8mKo0sNK23eFZQUYpQ3Q8-MnW9oS2tAmujbUCcNO4lm4wCOlXv-wK2_QbNE0WBKipjlNXOZZh-FVgEgDWPgd-0p8QT7xxH01nnlq5-n6U232vmzzWe7fxnkGTA2VoHfJ4BFcfL3WJ_AELjJY3Jkp2zYaTRxUqODev4CoQ5rCJwzteQk0kXAeWnwVzT2uvdFyRrRtTV24OWKkeYcmd0ZXYqcLEr7cjuhe0axi9"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-2 left-2 flex gap-1">
+<span class="material-symbols-outlined text-[14px] text-white">hiking</span>
+<span class="material-symbols-outlined text-[14px] text-white">ac_unit</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-1">
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Est. Budget</span>
+<span class="font-label-md text-label-md text-on-surface">$2,800</span>
+</div>
+<span class="text-xs text-tertiary">5 days</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for chips
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                if(this.classList.contains('selected')) {
+                    // Do nothing for already selected ones in this demo, normally would remove
+                } else {
+                    this.classList.toggle('bg-white/5');
+                    this.classList.toggle('border-white/20');
+                    this.classList.toggle('border-primary/50');
+                    this.classList.toggle('text-primary');
+                }
+            });
+        });
+    </script>
+</body></html>

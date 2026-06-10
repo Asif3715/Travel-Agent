@@ -205,15 +205,20 @@ export default function App() {
             </div>
           )}
 
-          {/* Streaming events */}
-          {events.map((evt, i) => (
-            <EventCard key={i} event={evt} />
-          ))}
+          {/* Streaming events (Grouped into Agent Blocks) */}
+          <div className="events-container">
+            {processEvents(events).map((group, i) => {
+              if (group.type === 'phase') return <PhaseBlock key={i} event={group.event} />
+              if (group.type === 'agent') return <AgentRunBlock key={i} group={group} />
+              if (group.type === 'generic' || group.type === 'log') return <EventCard key={i} event={group.event} />
+              return null;
+            })}
+          </div>
 
           {/* Loading indicator */}
-          {loading && (
+          {loading && events.length === 0 && (
             <div className="event-card" style={{ textAlign: 'center' }}>
-              <span className="spinner" /> <span style={{ marginLeft: 8, fontSize: 13, color: 'var(--text-secondary)' }}>Processing...</span>
+              <span className="spinner" /> <span style={{ marginLeft: 8, fontSize: 13, color: 'var(--text-secondary)' }}>Initializing agents...</span>
             </div>
           )}
 
@@ -267,104 +272,127 @@ export default function App() {
   )
 }
 
-/* ── Event Card Component ────────────────────────────────────────── */
-function EventCard({ event: evt }: { event: StreamEvent }) {
-  const { event, data } = evt
+/* ── Grouping Logic ──────────────────────────────────────────────── */
+function processEvents(events: StreamEvent[]) {
+  const groups: any[] = [];
+  let currentGroup: any = null;
 
+  for (const evt of events) {
+    if (evt.event === 'planning_start' || evt.event === 'phase_start') {
+      groups.push({ type: 'phase', event: evt });
+    } else if (evt.event === 'agent_start') {
+      // If there's an unclosed group, just push it (shouldn't happen usually unless parallel, but if parallel, this naive approach just interleaves them. A better approach groups by agent name, but backend streams sequentially)
+      if (currentGroup) groups.push(currentGroup);
+      currentGroup = { type: 'agent', startEvent: evt, logs: [], doneEvent: null };
+    } else if (evt.event === 'tool_call' || evt.event === 'tool_result' || evt.event === 'agent_warning') {
+      if (currentGroup) currentGroup.logs.push(evt);
+      else groups.push({ type: 'log', event: evt });
+    } else if (evt.event === 'agent_done') {
+      if (currentGroup) {
+        currentGroup.doneEvent = evt;
+        groups.push(currentGroup);
+        currentGroup = null;
+      } else {
+        groups.push({ type: 'log', event: evt });
+      }
+    } else {
+      groups.push({ type: 'generic', event: evt });
+    }
+  }
+  if (currentGroup) groups.push(currentGroup);
+  return groups;
+}
+
+/* ── Phase Block ─────────────────────────────────────────────────── */
+function PhaseBlock({ event: evt }: { event: StreamEvent }) {
+  const { event, data } = evt;
   if (event === 'planning_start') {
     return (
-      <div className="event-card phase">
-        <div className="event-header">
-          <div className="event-icon">🚀</div>
-          <span className="event-label">{String(data.message || 'Starting...')}</span>
-        </div>
+      <div className="phase-block">
+        <div className="phase-icon">🚀</div>
+        <div className="phase-text">{String(data.message || 'Starting...')}</div>
       </div>
     )
   }
-
-  if (event === 'phase_start') {
-    const agents = (data.agents as string[]) || []
-    return (
-      <div className="event-card phase">
-        <div className="event-header">
-          <div className="event-icon">📋</div>
-          <span className="event-label">Phase {String(data.phase)}: {String(data.label || '')}</span>
-        </div>
-        <div className="event-agents">
-          {agents.map(a => <span className="agent-tag" key={a}>{a}</span>)}
-        </div>
-      </div>
-    )
-  }
-
-  if (event === 'agent_start') {
-    return (
-      <div className="event-card">
-        <div className="event-header">
-          <div className="event-icon">🤖</div>
-          <span className="event-label">{String(data.agent)}</span>
-          <span className="event-sublabel">started</span>
-        </div>
-        <div className="event-body">{String(data.purpose || '')}</div>
-      </div>
-    )
-  }
-
-  if (event === 'tool_call') {
-    return (
-      <div className="event-card">
-        <div className="event-header">
-          <div className="event-icon">🔧</div>
-          <span className="event-label">{String(data.agent)}.{String(data.tool)}</span>
-          <span className="event-sublabel">calling...</span>
-        </div>
-      </div>
-    )
-  }
-
-  if (event === 'tool_result') {
-    const ok = Boolean(data.ok)
-    return (
-      <div className="event-card">
-        <div className="event-header">
-          <div className="event-icon">{ok ? '✅' : '❌'}</div>
-          <span className="event-label">{String(data.tool)}</span>
-          <span className={`tool-tag ${ok ? 'ok' : 'fail'}`}>{ok ? 'success' : 'failed'}</span>
-        </div>
-        <div className="event-body">{String(data.summary || '').slice(0, 150)}</div>
-      </div>
-    )
-  }
-
-  if (event === 'agent_warning') {
-    return (
-      <div className="event-card">
-        <div className="event-header">
-          <div className="event-icon">⚠️</div>
-          <span className="event-label">{String(data.agent)} warning</span>
-        </div>
-        <div className="event-body">{String(data.message || '')}</div>
-      </div>
-    )
-  }
-
-  if (event === 'agent_done') {
-    const usedLlm = data.used_llm !== false
-    return (
-      <div className="event-card">
-        <div className="event-header">
-          <div className="event-icon">✨</div>
-          <span className="event-label">{String(data.agent)} completed</span>
-          <span className={`tool-tag ${usedLlm ? 'ok' : 'fail'}`}>{usedLlm ? 'LLM' : 'fallback'}</span>
-        </div>
-        <div className="event-body">{String(data.summary || '').slice(0, 200)}</div>
-      </div>
-    )
-  }
-
-  // Generic fallback
+  const agents = (data.agents as string[]) || []
   return (
-    <div className="event-card">
+    <div className="phase-block">
+      <div className="phase-icon">📋</div>
+      <div className="phase-text">Phase {String(data.phase)}: {String(data.label || '')}</div>
+      <div className="phase-agents">
+        {agents.map(a => <span className="agent-tag" key={a}>{a}</span>)}
+      </div>
+    </div>
+  )
+}
+
+/* ── Agent Run Block (IDE-like) ──────────────────────────────────── */
+function AgentRunBlock({ group }: { group: any }) {
+  const [expanded, setExpanded] = useState(true);
+  const startData = group.startEvent.data;
+  const isDone = !!group.doneEvent;
+  const doneData = group.doneEvent?.data;
+
+  return (
+    <div className={`agent-ide-block ${isDone ? 'done' : 'running'}`}>
+      <div className="agent-ide-header" onClick={() => setExpanded(!expanded)}>
+        <div className="ide-header-left">
+          <div className="ide-icon">{isDone ? '⚡' : <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />}</div>
+          <div className="ide-agent-name">{String(startData.agent)}</div>
+          <div className="ide-status-badge">{isDone ? 'Completed' : 'Working'}</div>
+        </div>
+        <div className="ide-header-right">
+          <button className="ide-toggle">{expanded ? '▲' : '▼'}</button>
+        </div>
+      </div>
+
+      {expanded && (
+        <div className="agent-ide-body">
+          <div className="ide-purpose">Target: {String(startData.purpose || '')}</div>
+
+          {group.logs.length > 0 && (
+            <div className="ide-terminal">
+              <div className="term-header">
+                <span className="term-dot red"></span>
+                <span className="term-dot yellow"></span>
+                <span className="term-dot green"></span>
+                <span className="term-title">bash — {String(startData.agent).toLowerCase().replace(/\s+/g, '-')}-agent</span>
+              </div>
+              <div className="term-content">
+                {group.logs.map((log: StreamEvent, i: number) => {
+                  if (log.event === 'tool_call') {
+                    return <div key={i} className="term-line cmd"><span className="prompt">$</span> {String(log.data.tool)}()</div>
+                  }
+                  if (log.event === 'tool_result') {
+                    const ok = Boolean(log.data.ok);
+                    return <div key={i} className={`term-line out ${ok ? 'ok' : 'err'}`}>↳ {String(log.data.summary || '').slice(0, 180)}</div>
+                  }
+                  if (log.event === 'agent_warning') {
+                    return <div key={i} className="term-line warn">⚠ {String(log.data.message || '')}</div>
+                  }
+                  return null;
+                })}
+              </div>
+            </div>
+          )}
+
+          {isDone && (
+            <div className="ide-summary">
+              <div className="summary-label">Result Summary</div>
+              <div className="summary-text">{String(doneData.summary || '')}</div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ── Fallback Event Card Component ───────────────────────────────── */
+function EventCard({ event: evt }: { event: StreamEvent }) {
+  const { event, data } = evt
+  return (
+    <div className="event-card fallback">
       <div className="event-header">
         <div className="event-icon">📡</div>
         <span className="event-label">{event}</span>
